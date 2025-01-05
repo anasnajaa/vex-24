@@ -1,11 +1,13 @@
-# ---------------------------------------------------------------------------- #
-#                                                                              #
-# 	Module:       main.py                                                      #
-# 	Author:       anasnajaa                                                    #
-# 	Created:      1/5/2025, 11:23:16 AM                                        #
-# 	Description:  V5 project                                                   #
-#                                                                              #
-# ---------------------------------------------------------------------------- #
+#-----------------------------------------------------------------------------*/
+#                                                                             */
+#     Module:       Bluntnose Main Code                                       */
+#     Author:       Anas Najaa                                                */
+#     Forked From:  https://github.com/jpearman/v5-drivecode                  */
+#     Created:      Tue Dec 20 2024                                           */
+#     Description:  Default code for bluntnose VeXU Robot - Python            */
+#     API Ref:      https://api.vex.com/v5/home/python/index.html             */
+#                                                                             */
+#-----------------------------------------------------------------------------*/
 
 # Library imports
 from vex import *
