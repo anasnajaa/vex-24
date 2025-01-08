@@ -110,7 +110,7 @@ MAX_SPEED_INTAKE = 100
 BTN_B_X_PRESSED = False
 INTAKE_SPEED = 0
 mogo_clamp_on = True
-
+intake_on = False
 
 #-----------------------------------------------------------------------------*/
 #   @brief  Drive task                                                        */
@@ -354,7 +354,14 @@ def mogo_clamp_button_pressed():
     threewire_mogo_clamp.set(mogo_clamp_on)
     return 
 
+def intake_toggle_button_pressed():
+    global intake_on
+    intake_on = not intake_on    
+    return 
+
+
 controller_1.buttonA.pressed(mogo_clamp_button_pressed)
+controller_1.buttonDown.pressed(intake_toggle_button_pressed)
 
 def drive_task():
     drive_left = 0
@@ -371,17 +378,16 @@ def drive_task():
     while True:
         # buttons
         # Three values, max, 0 and -max.
-        drive_m_3 = (controller_1.buttonB.pressing() - controller_1.buttonX.pressing()) * MAX_SPEED_INTAKE
-        drive_m_7 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
+        drive_m_7 = (controller_1.buttonB.pressing() - controller_1.buttonX.pressing()) * MAX_SPEED_INTAKE
+        drive_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
 
         drive_m_4 = (controller_1.buttonRight.pressing() - controller_1.buttonLeft.pressing()) * MAX_SPEED
         drive_m_5 = (controller_1.buttonUp.pressing() - controller_1.buttonDown.pressing()) * MAX_SPEED
         #drive_m_6 = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * MAX_SPEED
         
-        drive_m_8 = (controller_1.buttonR1.pressing() - controller_1.buttonR2.pressing()) * MAX_SPEED
+        drive_m_8 = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED
 
-        
-
+    
 
         # use limit switches on motors 3 and 8
         #if (limit_switch_3f.pressing() and (drive_m_3 > 0)) or (limit_switch_3r.pressing() and (drive_m_3 < 0)):
@@ -424,9 +430,13 @@ def drive_task():
         motor_5.spin(FORWARD, drive_m_5, PERCENT)
         #motor_6.spin(FORWARD, drive_m_6, PERCENT)
 
-        #if drive_m_7 > 0 OR BTN_B_X_PRESSED:
-        motor_7.spin(FORWARD, -drive_m_7, PERCENT)
-        motor_3.spin(FORWARD, drive_m_3, PERCENT)
+        if intake_on == True:
+            motor_7.spin(FORWARD, -100, PERCENT)
+            motor_3.spin(FORWARD, -100, PERCENT)
+        else:
+            #if drive_m_7 > 0 OR BTN_B_X_PRESSED:
+            motor_7.spin(FORWARD, -drive_m_7, PERCENT)
+            motor_3.spin(FORWARD, drive_m_3, PERCENT)
         
         motor_8.spin(FORWARD, drive_m_8, PERCENT)
 
