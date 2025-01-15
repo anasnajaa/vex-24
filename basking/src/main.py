@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------*/
 #                                                                             */
 #     Module:       Basking Main Code                                         */
-#     Author:       Anas Najaa                                                */
+#     Author:       AbdulAziz                                                 */
 #     Forked From:  https://github.com/jpearman/v5-drivecode                  */
 #     Created:      Sun Jan 12 2025                                           */
 #     Description:  Default code for Basking VeXU Robot - Python              */
@@ -15,31 +15,33 @@ from vex import *
 # Brain should be defined by default
 brain=Brain()
         
-# Create motors on ports 1 through 10
-motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False)
-motor_02 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False)
-motor_03 = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False)
-motor_04 = Motor(Ports.PORT4, GearSetting.RATIO_18_1, False)
+# drive train motors
+motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False) # right
+motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False) # right
+motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True) # left
+motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, True) # left
+motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # chain and hook 
+motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # intake roller
+
+
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 motor_06 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 motor_07 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
-motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True)
-motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True)
-motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
+#motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
 
 # The controller
 controller_1 = Controller(ControllerType.PRIMARY)
 
 # Assign generic motor to more useful names
-right_drive_1 = motor_01
-left_drive_1 = motor_10
+right_drive_1 = motor_20
+left_drive_1 =  motor_12
 
-right_drive_2 = motor_02
-left_drive_2 = motor_09
+right_drive_2 = motor_19
+left_drive_2 = motor_11
 
-intake_roller = motor_03
-chain_and_hook = motor_11
+intake_roller = motor_10
+chain_and_hook = motor_09
 
 dunking_hook = motor_08
 
@@ -70,6 +72,7 @@ drive_mode = DriveType(DriveType.SPLIT)
 MAX_SPEED_DUNKING_HOOK = 50
 MAX_SPEED_INTAKE = 100
 mogo_clamp_on = True
+mouth_open = False
 intake_on = False
 
 #-----------------------------------------------------------------------------*/
@@ -92,6 +95,13 @@ def mogo_clamp_button_pressed():
     three_wire_mogo_clamp.set(mogo_clamp_on)
     return 
 
+def mouth_button_pressed():
+    global mouth_open
+    mouth_open = not mouth_open
+    three_wire_mouth = DigitalOut(brain.three_wire_port.g)
+    three_wire_mouth.set(mouth_open)
+
+
 def intake_toggle_button_pressed():
     global intake_on
     intake_on = not intake_on    
@@ -99,6 +109,7 @@ def intake_toggle_button_pressed():
 
 
 # special buttons events
+controller_1.buttonY.pressed(mouth_button_pressed)
 controller_1.buttonA.pressed(mogo_clamp_button_pressed)
 controller_1.buttonDown.pressed(intake_toggle_button_pressed)
 
@@ -118,7 +129,7 @@ def drive_task():
         # buttons
         chain_and_hook_m_7 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
         intake_roller_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
-        dunking_hook_m_8 = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED_DUNKING_HOOK
+        # dunking_hook_m_8 = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED_DUNKING_HOOK
         #drive_m_4 = (controller_1.buttonRight.pressing() - controller_1.buttonLeft.pressing()) * MAX_SPEED
         #drive_m_5 = (controller_1.buttonUp.pressing() - controller_1.buttonDown.pressing()) * MAX_SPEED
         #drive_m_6 = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * MAX_SPEED
@@ -132,8 +143,8 @@ def drive_task():
             drive_left = controller_1.axis3.position()
             drive_right = controller_1.axis2.position()
         elif drive_mode == DriveType.SPLIT:
-            drive_left = controller_1.axis3.position() + controller_1.axis1.position()
-            drive_right = controller_1.axis3.position() - controller_1.axis1.position()
+            drive_left = controller_1.axis3.position() - controller_1.axis1.position()
+            drive_right = controller_1.axis3.position() + controller_1.axis1.position()
         elif drive_mode == DriveType.RIGHT:
             drive_left = controller_1.axis2.position() + controller_1.axis1.position()
             drive_right = controller_1.axis2.position() - controller_1.axis1.position()
@@ -163,7 +174,7 @@ def drive_task():
             chain_and_hook.spin(FORWARD, chain_and_hook_m_7, PERCENT)
             intake_roller.spin(FORWARD, intake_roller_m_3, PERCENT)
         
-        dunking_hook.spin(FORWARD, dunking_hook_m_8, PERCENT)
+        #dunking_hook.spin(FORWARD, dunking_hook_m_8, PERCENT)
 
         # No need to run too fast
         sleep(15)
@@ -253,10 +264,10 @@ def display_task():
     brain.screen.set_pen_color(Color.RED)
     brain.screen.print_at("TEST DRIVE CODE", x=90, y=160)
 
-    motors = [motor_01,
-              motor_02,
-              motor_03,
-              motor_04,
+    motors = [motor_11,
+              motor_12,
+              motor_19,
+              motor_20,
               motor_05,
               motor_06,
               motor_07,
