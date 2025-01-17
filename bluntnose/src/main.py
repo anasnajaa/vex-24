@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------*/
 #                                                                             */
 #     Module:       Bluntnose Main Code                                       */
-#     Author:       Abdulaziz                                                */
+#     Author:       Anas Najaa                                                */
 #     Forked From:  https://github.com/jpearman/v5-drivecode                  */
 #     Created:      Tue Dec 20 2024                                           */
 #     Description:  Default code for bluntnose VeXU Robot - Python            */
