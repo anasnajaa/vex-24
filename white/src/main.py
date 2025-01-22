@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------*/
 #                                                                             */
-#     Module:       White Main Code                                         */
-#     Author:       Bashayer                                                 */
+#     Module:       Great White Main Code                                     */
+#     Author:       Bashayer                                                  */
 #     Forked From:  https://github.com/jpearman/v5-drivecode                  */
 #     Created:      Sun Jan 12 2025                                           */
 #     Description:  Default code for Basking VeXU Robot - Python              */
@@ -14,39 +14,48 @@ from vex import *
 
 # Brain should be defined by default
 brain=Brain()
-        
+
+motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False) # left
+motor_02 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False) # left
+motor_03 = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False) # left
+
+motor_04 = Motor(Ports.PORT4, GearSetting.RATIO_18_1, False)
+
+motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True) # right
+motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # right
+motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # right
+
 # drive train motors
-motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False) # right
-motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False) # right
-motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True) # left
-motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_18_1, True) # left
-motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # chain and hook 
-motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # intake roller
+
+
+# motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # chain and hook 
+# motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # intake roller
 
 
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 motor_06 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 motor_07 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
-motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, False)
 #motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_18_1, False)
 
 # The controller
 controller_1 = Controller(ControllerType.PRIMARY)
 
 # Assign generic motor to more useful names
-right_drive_1 = motor_20
-left_drive_1 =  motor_12
+right_drive_1 = motor_08
+right_drive_2 = motor_09
+right_drive_3 = motor_10
 
-right_drive_2 = motor_19
-left_drive_2 = motor_11
+left_drive_1 =  motor_01
+left_drive_2 = motor_02
+left_drive_3 = motor_03
 
-intake_roller = motor_10
-chain_and_hook = motor_09
+# intake_roller = motor_10
+# chain_and_hook = motor_09
 
-dunking_hook = motor_08
+# dunking_hook = motor_08
 
-intake_roller.set_velocity(200, RPM)
-chain_and_hook.set_velocity(200, RPM)
+# intake_roller.set_velocity(200, RPM)
+# chain_and_hook.set_velocity(200, RPM)
 
 
 class DriveType:
@@ -127,8 +136,8 @@ def drive_task():
     # loop forever
     while True:
         # buttons
-        chain_and_hook_m_7 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
-        intake_roller_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
+        # chain_and_hook_m_7 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
+        # intake_roller_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
         # dunking_hook_m_8 = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED_DUNKING_HOOK
         #drive_m_4 = (controller_1.buttonRight.pressing() - controller_1.buttonLeft.pressing()) * MAX_SPEED
         #drive_m_5 = (controller_1.buttonUp.pressing() - controller_1.buttonDown.pressing()) * MAX_SPEED
@@ -143,8 +152,8 @@ def drive_task():
             drive_left = controller_1.axis3.position()
             drive_right = controller_1.axis2.position()
         elif drive_mode == DriveType.SPLIT:
-            drive_left = controller_1.axis3.position() - controller_1.axis1.position()
-            drive_right = controller_1.axis3.position() + controller_1.axis1.position()
+            drive_left = controller_1.axis3.position() + controller_1.axis1.position()
+            drive_right = controller_1.axis3.position() - controller_1.axis1.position()
         elif drive_mode == DriveType.RIGHT:
             drive_left = controller_1.axis2.position() + controller_1.axis1.position()
             drive_right = controller_1.axis2.position() - controller_1.axis1.position()
@@ -160,19 +169,23 @@ def drive_task():
 
         # The drivetrain
         left_drive_1.spin(FORWARD, drive_left, PERCENT)
-        left_drive_2.spin(FORWARD, drive_left, PERCENT)
         right_drive_1.spin(FORWARD, drive_right, PERCENT)
+
+        left_drive_2.spin(FORWARD, drive_left, PERCENT)
         right_drive_2.spin(FORWARD, drive_right, PERCENT)
+
+        left_drive_3.spin(FORWARD, drive_left, PERCENT)
+        right_drive_3.spin(FORWARD, drive_right, PERCENT)
 
 
         # intake roller + chain and hook
         # if intake is toggled on spin forever
-        if intake_on == True:
-            chain_and_hook.spin(FORWARD, -100, PERCENT)
-            intake_roller.spin(FORWARD, -100, PERCENT)
-        else:
-            chain_and_hook.spin(FORWARD, chain_and_hook_m_7, PERCENT)
-            intake_roller.spin(FORWARD, intake_roller_m_3, PERCENT)
+        #if intake_on == True:
+            #chain_and_hook.spin(FORWARD, -100, PERCENT)
+            #intake_roller.spin(FORWARD, -100, PERCENT)
+        #else:
+            # chain_and_hook.spin(FORWARD, chain_and_hook_m_7, PERCENT)
+            # intake_roller.spin(FORWARD, intake_roller_m_3, PERCENT)
         
         #dunking_hook.spin(FORWARD, dunking_hook_m_8, PERCENT)
 
@@ -264,10 +277,10 @@ def display_task():
     brain.screen.set_pen_color(Color.RED)
     brain.screen.print_at("TEST DRIVE CODE", x=90, y=160)
 
-    motors = [motor_11,
-              motor_12,
-              motor_19,
-              motor_20,
+    motors = [motor_01,
+              motor_02,
+              motor_03,
+              motor_04,
               motor_05,
               motor_06,
               motor_07,
@@ -288,233 +301,3 @@ def display_task():
 
 # Run the display code
 display = Thread(display_task)
-
-
-#-----------------------------------------------------------------------------*/
-#   @brief  Christmas task - grabs mogo, collects two rings and scores them   */
-#           then parks                                                        */
-#-----------------------------------------------------------------------------*/
-def xmas_task():
-    three_wire_mogo_clamp = DigitalOut(brain.three_wire_port.h)
-    three_wire_mogo_clamp.set(True)
-
-    # Go back
-    left_drive_1.spin(FORWARD, -50, PERCENT)
-    left_drive_2.spin(FORWARD, -50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(.8, SECONDS)
-    #####################
-
-    # Stop
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # clamp mogo
-    three_wire_mogo_clamp.set(False)
-    wait(1, SECONDS)
-    #####################
-
-    # start intake and roller
-    intake_roller.spin(FORWARD, 100, PERCENT)
-    chain_and_hook.spin(FORWARD, -100, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # move forward
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, 50, PERCENT)
-    right_drive_2.spin(FORWARD, 50, PERCENT)
-    wait(5, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(3, SECONDS)
-    #####################
-
-    # go back a little
-    left_drive_1.spin(FORWARD, -50, PERCENT)
-    left_drive_2.spin(FORWARD, -50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # let go of mogo and stop rollers
-    three_wire_mogo_clamp.set(True)
-    intake_roller.spin(FORWARD, 0, PERCENT)
-    chain_and_hook.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # move forward a little
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, 50, PERCENT)
-    right_drive_2.spin(FORWARD, 50, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # turn right
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(.4, SECONDS)
-    #####################
-    
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # move forward
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, 50, PERCENT)
-    right_drive_2.spin(FORWARD, 50, PERCENT)
-    wait(3, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # turn right
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(.4, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # move forward
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, 50, PERCENT)
-    right_drive_2.spin(FORWARD, 50, PERCENT)
-    wait(4, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # turn right
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(.4, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # move forward
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, 50, PERCENT)
-    right_drive_2.spin(FORWARD, 50, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # turn right
-    left_drive_1.spin(FORWARD, 50, PERCENT)
-    left_drive_2.spin(FORWARD, 50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(.4, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-
-    # go back a little
-    left_drive_1.spin(FORWARD, -50, PERCENT)
-    left_drive_2.spin(FORWARD, -50, PERCENT)
-    right_drive_1.spin(FORWARD, -50, PERCENT)
-    right_drive_2.spin(FORWARD, -50, PERCENT)
-    wait(1.7, SECONDS)
-    #####################
-
-    # stop all motors
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    wait(1, SECONDS)
-    #####################
-    
-    # stop all
-    left_drive_1.spin(FORWARD, 0, PERCENT)
-    left_drive_2.spin(FORWARD, 0, PERCENT)
-    right_drive_1.spin(FORWARD, 0, PERCENT)
-    right_drive_2.spin(FORWARD, 0, PERCENT)
-    intake_roller.spin(FORWARD, 0, PERCENT)
-    chain_and_hook.spin(FORWARD, 0, PERCENT)
-    #####################
-
-# xmas_task()
