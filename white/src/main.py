@@ -25,6 +25,7 @@ motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True) # right
 motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # right
 motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # right
 
+motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True)
 motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_36_1, True) 
 motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False) 
 
@@ -55,12 +56,12 @@ left_drive_3 = motor_03
 lift_left = motor_13
 lift_right = motor_20
 
-# intake_roller = motor_10
+intake_roller = motor_19
 chain_and_hook = motor_12
 
 # dunking_hook = motor_08
 
-# intake_roller.set_velocity(200, RPM)
+intake_roller.set_velocity(200, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 
@@ -143,7 +144,7 @@ def drive_task():
     while True:
         # buttons
         chain_and_hook_m_12 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
-        # intake_roller_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
+        intake_roller_m_19 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
         drive_lift = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED_DUNKING_HOOK
         #drive_m_4 = (controller_1.buttonRight.pressing() - controller_1.buttonLeft.pressing()) * MAX_SPEED
         #drive_m_5 = (controller_1.buttonUp.pressing() - controller_1.buttonDown.pressing()) * MAX_SPEED
@@ -191,10 +192,10 @@ def drive_task():
         # if intake is toggled on spin forever
         if intake_on == True:
             chain_and_hook.spin(FORWARD, -100, PERCENT)
-            #intake_roller.spin(FORWARD, -100, PERCENT)
+            intake_roller.spin(FORWARD, -100, PERCENT)
         else:
             chain_and_hook.spin(FORWARD, chain_and_hook_m_12, PERCENT)
-            # intake_roller.spin(FORWARD, intake_roller_m_3, PERCENT)
+            intake_roller.spin(FORWARD, intake_roller_m_19, PERCENT)
         
         #dunking_hook.spin(FORWARD, dunking_hook_m_8, PERCENT)
 
