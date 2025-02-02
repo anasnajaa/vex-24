@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------*/
 #                                                                             */
 #     Module:       Great White Main Code                                     */
-#     Authors:       Bashayer / Abdulaziz / Thamer                            */
+#     Authors:      Bashayer / Abdulaziz / Thamer                             */
 #     Forked From:  https://github.com/jpearman/v5-drivecode                  */
 #     Created:      Sun Jan 12 2025                                           */
 #     Description:  Default code for Basking VeXU Robot - Python              */
@@ -13,26 +13,21 @@
 from vex import *
 
 # Brain should be defined by default
-brain=Brain()
+brain = Brain()
 
 motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_18_1, False) # left
 motor_02 = Motor(Ports.PORT2, GearSetting.RATIO_18_1, False) # left
 motor_03 = Motor(Ports.PORT3, GearSetting.RATIO_18_1, False) # left
 
-motor_04 = Motor(Ports.PORT4, GearSetting.RATIO_18_1, False)
+sensor_rotation = Rotation(Ports.PORT4, False)
 
 motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True) # right
 motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # right
 motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # right
 
+motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True)
 motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_36_1, True) 
 motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False) 
-
-# drive train motors
-
-
-# motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # chain and hook 
-# motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # intake roller
 
 
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
@@ -40,8 +35,12 @@ motor_06 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
 motor_07 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
 
+# wait for all motors and sensors to fully initialize
+wait(30, MSEC)
+
 # The controller
 controller_1 = Controller(ControllerType.PRIMARY)
+
 
 # Assign generic motor to more useful names
 right_drive_1 = motor_08
@@ -55,12 +54,10 @@ left_drive_3 = motor_03
 lift_left = motor_13
 lift_right = motor_20
 
-# intake_roller = motor_10
+intake_roller = motor_19
 chain_and_hook = motor_12
 
-# dunking_hook = motor_08
-
-# intake_roller.set_velocity(200, RPM)
+intake_roller.set_velocity(200, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 
@@ -142,13 +139,10 @@ def drive_task():
     # loop forever
     while True:
         # buttons
-        chain_and_hook_m_12 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
-        # intake_roller_m_3 = (controller_1.buttonX.pressing() - controller_1.buttonB.pressing()) * MAX_SPEED_INTAKE
-        drive_lift = (controller_1.buttonL1.pressing() - controller_1.buttonR1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        #drive_m_4 = (controller_1.buttonRight.pressing() - controller_1.buttonLeft.pressing()) * MAX_SPEED
-        #drive_m_5 = (controller_1.buttonUp.pressing() - controller_1.buttonDown.pressing()) * MAX_SPEED
-        #drive_m_6 = (controller_1.buttonA.pressing() - controller_1.buttonY.pressing()) * MAX_SPEED
-
+        chain_and_hook_m_12 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
+        intake_roller_m_19 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
+        
+        drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
 
         # Various choices for arcade or tank drive
         if drive_mode == DriveType.LEFT:
@@ -183,20 +177,28 @@ def drive_task():
         left_drive_3.spin(FORWARD, drive_left, PERCENT)
         right_drive_3.spin(FORWARD, drive_right, PERCENT)
 
-        lift_left.spin(FORWARD, drive_lift, PERCENT)
-        lift_right.spin(FORWARD, drive_lift, PERCENT)
+        if controller_1.buttonR1.pressing() or controller_1.buttonL1.pressing():
+            if sensor_rotation.angle() < 140 or sensor_rotation.angle() > 235:
+                # do nothing, the arm is above operational range
+                lift_left.stop()
+                lift_right.stop()
+            else:
+                # spin normally
+                lift_left.spin(FORWARD, drive_lift, PERCENT)
+                lift_right.spin(FORWARD, drive_lift, PERCENT)
+        else:
+            lift_left.stop(BRAKE)
+            lift_right.stop(BRAKE)
 
 
         # intake roller + chain and hook
         # if intake is toggled on spin forever
         if intake_on == True:
-            chain_and_hook.spin(FORWARD, -100, PERCENT)
-            #intake_roller.spin(FORWARD, -100, PERCENT)
+            chain_and_hook.spin(FORWARD, 100, PERCENT)
+            intake_roller.spin(FORWARD, 100, PERCENT)
         else:
             chain_and_hook.spin(FORWARD, chain_and_hook_m_12, PERCENT)
-            # intake_roller.spin(FORWARD, intake_roller_m_3, PERCENT)
-        
-        #dunking_hook.spin(FORWARD, dunking_hook_m_8, PERCENT)
+            intake_roller.spin(FORWARD, intake_roller_m_19, PERCENT)
 
         # No need to run too fast
         sleep(15)
@@ -218,9 +220,6 @@ lred = Color(0x603030)
 def displayMotorData(m, index):
     ypos = 0
     xpos = index * 48
-
-    # command value not available in Python
-    v1 = 0
 
     # The actual velocity of the motor in rpm
     v2 = m.velocity(RPM)
@@ -277,23 +276,26 @@ def displayMotorData(m, index):
     brain.screen.set_pen_color(Color.WHITE)
     brain.screen.draw_line(xpos, ypos+14, xpos+48, ypos+14)
 
+    brain.screen.print_at("ROTATION", x=90, y=175)
+    brain.screen.print_at(sensor_rotation.angle(), x=90, y=190)
+
 #-----------------------------------------------------------------------------*/
 #   @brief  Display task - show some useful motor data                        */
 #-----------------------------------------------------------------------------*/
 
 def display_task():
-    brain.screen.set_font(FontType.PROP40)
+    brain.screen.set_font(FontType.PROP20)
     brain.screen.set_pen_color(Color.RED)
     brain.screen.print_at("TEST DRIVE CODE", x=90, y=160)
 
     motors = [motor_01,
               motor_02,
               motor_03,
-              motor_04,
-              motor_05,
+              motor_20,
+              motor_13,
               motor_06,
-              motor_07,
-              motor_08,
+              motor_19,
+              motor_12,
               motor_09,
               motor_10]
 
