@@ -56,11 +56,11 @@ left_drive_3 = motor_13
 intake_roller = motor_01
 chain_and_hook = motor_10
 
-intake_roller.set_velocity(400, RPM)
+intake_roller.set_velocity(500, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
-MAX_RPM = 65 # percent 
+MAX_RPM = 300 # percent 
 MAX_SPEED_INTAKE = 100
 mogo_clamp_on = True
 mouth_open = False
@@ -115,8 +115,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
-        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
+        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * 0.5 * MAX_RPM
+        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * 0.5 * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
@@ -291,7 +291,7 @@ def autonomous_task():
 
     rightGearsMove(REVERSE, 35)
     leftGearsMove(REVERSE, 35)
-    wait(1.5, SECONDS)  # Move backward for 1.8 seconds
+    wait(1.4, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(REVERSE, 0)
@@ -331,7 +331,7 @@ def autonomous_task():
 
     rightGearsMove(REVERSE, 35)
     leftGearsMove(REVERSE, 35)
-    wait(0.5, SECONDS)  # Move backward for 1.8 seconds
+    wait(0.6, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(REVERSE, 0)
@@ -394,4 +394,4 @@ def autonomous_task():
 
     drive_task()
 
-comp = Competition(autonomous_task ,drive_task)
+comp = Competition(drive_task, autonomous_task)
