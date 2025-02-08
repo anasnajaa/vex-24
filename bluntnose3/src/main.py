@@ -17,13 +17,13 @@ brain = Brain()
 
 # We define motors we want to use here 
 # we use the motor variable to display statistics later
-motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_6_1, True) # left
-motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_6_1, True) # left
-motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_6_1, False) # left - top
+motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_6_1, False) # left
+motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_6_1, False) # left
+motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_6_1, True) # left - top
 
-motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_6_1, False) # right
-motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_6_1, False) # right
-motor_18 = Motor(Ports.PORT18, GearSetting.RATIO_6_1, True) # right - top
+motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_6_1, True) # right
+motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_6_1, True) # right
+motor_18 = Motor(Ports.PORT18, GearSetting.RATIO_6_1, False) # right - top
 
 
 motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_6_1, True)
@@ -65,7 +65,7 @@ left_drive_1.set_velocity(300, RPM)
 left_drive_2.set_velocity(300, RPM)
 left_drive_3.set_velocity(300, RPM)
 
-intake_roller.set_velocity(600, RPM)
+intake_roller.set_velocity(400, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
@@ -124,8 +124,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  controller_1.axis3.position() + controller_1.axis1.position() * MAX_RPM
-        drive_right = controller_1.axis3.position() - controller_1.axis1.position() * MAX_RPM
+        drive_left =  (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
+        drive_right = (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
@@ -136,14 +136,14 @@ def drive_task():
             drive_right = 0
 
         # The drivetrain
-        left_drive_1.spin(FORWARD, drive_left, PERCENT)
-        right_drive_1.spin(FORWARD, drive_right, PERCENT)
+        left_drive_1.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_1.spin(FORWARD, -drive_right, PERCENT)
 
-        left_drive_2.spin(FORWARD, drive_left, PERCENT)
-        right_drive_2.spin(FORWARD, drive_right, PERCENT)
+        left_drive_2.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_2.spin(FORWARD, -drive_right, PERCENT)
 
-        left_drive_3.spin(FORWARD, drive_left, PERCENT)
-        right_drive_3.spin(FORWARD, drive_right, PERCENT)
+        left_drive_3.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_3.spin(FORWARD, -drive_right, PERCENT)
 
         # intake roller + chain and hook
         # if intake is toggled on spin forever
@@ -264,7 +264,6 @@ def display_task():
 
 # Run the display code
 display = Thread(display_task)
-
 
 def setVelocity(percentage):
     right_drive_1.set_velocity(percentage, PERCENT)
@@ -394,5 +393,5 @@ def autonomous_task():
 
     drive_task()
 
-    
+
 comp = Competition(autonomous_task ,drive_task)

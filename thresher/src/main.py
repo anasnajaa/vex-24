@@ -115,8 +115,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  controller_1.axis3.position() - controller_1.axis1.position() * MAX_RPM
-        drive_right = controller_1.axis3.position() + controller_1.axis1.position() * MAX_RPM
+        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
+        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
