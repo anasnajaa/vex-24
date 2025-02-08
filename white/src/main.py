@@ -26,9 +26,8 @@ motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # right
 motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # right
 
 motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True)
-motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_36_1, True) 
-motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False) 
-
+motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_36_1, True)
+motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False)
 
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 motor_06 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
@@ -57,11 +56,12 @@ lift_right = motor_20
 intake_roller = motor_19
 chain_and_hook = motor_12
 
+#set rpm for intake & chain&hook
 intake_roller.set_velocity(200, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
-MAX_SPEED_DUNKING_HOOK = 50
+MAX_SPEED_LIFT = 50
 MAX_SPEED_INTAKE = 100
 mogo_clamp_on = True
 intake_on = False
@@ -114,7 +114,7 @@ def drive_task():
         chain_and_hook_m_12 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
         intake_roller_m_19 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
         
-        drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
+        drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_LIFT
         drive_left = controller_1.axis3.position() + controller_1.axis1.position()
         drive_right = controller_1.axis3.position() - controller_1.axis1.position()
 
