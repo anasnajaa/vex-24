@@ -25,13 +25,12 @@ motor_08 = Motor(Ports.PORT8, GearSetting.RATIO_18_1, True) # right
 motor_09 = Motor(Ports.PORT9, GearSetting.RATIO_18_1, True) # right
 motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) # right
 
-motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_18_1, True)
+motor_07 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, True)
 motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_36_1, True)
 motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_36_1, False)
 
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
 motor_06 = Motor(Ports.PORT6, GearSetting.RATIO_18_1, False)
-motor_07 = Motor(Ports.PORT7, GearSetting.RATIO_18_1, False)
 motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_18_1, False)
 
 # wait for all motors and sensors to fully initialize
@@ -53,7 +52,7 @@ left_drive_3 = motor_03
 lift_left = motor_13
 lift_right = motor_20
 
-intake_roller = motor_19
+intake_roller = motor_07
 chain_and_hook = motor_12
 
 #set rpm for intake & chain&hook
@@ -254,7 +253,7 @@ def display_task():
               motor_20,
               motor_13,
               motor_06,
-              motor_19,
+              motor_07,
               motor_12,
               motor_09,
               motor_10]
