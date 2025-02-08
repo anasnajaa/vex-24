@@ -163,7 +163,7 @@ def drive_task():
         sleep(15)
 
 # Run the drive code
-drive = Thread(drive_task)
+# drive = Thread(drive_task)
 
 
 #------------------------------------------------------------------------------*/
@@ -271,3 +271,46 @@ def display_task():
 
 # Run the display code
 display = Thread(display_task)
+
+
+
+def setVelocity(percentage):
+    right_drive_1.set_velocity(percentage, PERCENT)
+    right_drive_2.set_velocity(percentage, PERCENT)
+    right_drive_3.set_velocity(percentage, PERCENT)
+    left_drive_1.set_velocity(percentage, PERCENT)
+    left_drive_2.set_velocity(percentage, PERCENT)
+    left_drive_3.set_velocity(percentage, PERCENT)
+
+
+def rightGearsMove(direction, percentage):
+    right_drive_1.spin(direction, percentage, PERCENT)
+    right_drive_2.spin(direction, percentage, PERCENT)
+    right_drive_3.spin(direction, percentage, PERCENT)
+
+def leftGearsMove(direction, percentage):
+    left_drive_1.spin(direction, percentage, PERCENT)
+    left_drive_2.spin(direction, percentage, PERCENT)
+    left_drive_3.spin(direction, percentage, PERCENT)
+
+def allIntakes(direction, percentage):
+    intake_roller.spin(direction, percentage, PERCENT)
+    chain_and_hook.spin(direction, percentage, PERCENT)
+
+
+def autonomous_task():
+    brain.screen.print("Auton Started")
+    # three_wire_mogo_clamp_auton = DigitalOut(brain.three_wire_port.h)
+
+    # open piston
+    # three_wire_mogo_clamp_auton.set(True)
+    brain.screen.set_cursor(3, 1)
+    brain.screen.print("Back Piston: Opened")
+
+    rightGearsMove(FORWARD, 35)
+    leftGearsMove(FORWARD, 35)
+    wait(2.5, SECONDS)  # Move backward for 1.8 seconds
+
+    drive_task()
+
+comp = Competition(autonomous_task ,drive_task)
