@@ -3,7 +3,7 @@
 #     Module:       Thresher Main Code                                        */
 #     Authors:      Thamer                                                    */
 #     Forked From:  https://github.com/jpearman/v5-drivecode                  */
-#     Created:      Sun Jan 12 2025                                           */
+#     Created:      Sat Feb 8 2025                                           */
 #     Description:  Default code for Basking VeXU Robot - Python              */
 #     API Ref:      https://api.vex.com/v5/home/python/index.html             */
 #                                                                             */
@@ -55,6 +55,15 @@ left_drive_3 = motor_13
 
 intake_roller = motor_01
 chain_and_hook = motor_10
+
+# limit speed
+right_drive_1.set_velocity(300, RPM)
+right_drive_2.set_velocity(300, RPM)
+right_drive_3.set_velocity(300, RPM)
+
+left_drive_1.set_velocity(300, RPM)
+left_drive_2.set_velocity(300, RPM)
+left_drive_3.set_velocity(300, RPM)
 
 intake_roller.set_velocity(400, RPM)
 chain_and_hook.set_velocity(200, RPM)
@@ -115,8 +124,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
-        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
+        drive_left =  (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
+        drive_right = (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
@@ -127,14 +136,14 @@ def drive_task():
             drive_right = 0
 
         # The drivetrain
-        left_drive_1.spin(FORWARD, drive_left, PERCENT)
-        right_drive_1.spin(FORWARD, drive_right, PERCENT)
+        left_drive_1.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_1.spin(FORWARD, -drive_right, PERCENT)
 
-        left_drive_2.spin(FORWARD, drive_left, PERCENT)
-        right_drive_2.spin(FORWARD, drive_right, PERCENT)
+        left_drive_2.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_2.spin(FORWARD, -drive_right, PERCENT)
 
-        left_drive_3.spin(FORWARD, drive_left, PERCENT)
-        right_drive_3.spin(FORWARD, drive_right, PERCENT)
+        left_drive_3.spin(FORWARD, -drive_left, PERCENT)
+        right_drive_3.spin(FORWARD, -drive_right, PERCENT)
 
         # intake roller + chain and hook
         # if intake is toggled on spin forever
@@ -256,7 +265,6 @@ def display_task():
 # Run the display code
 display = Thread(display_task)
 
-
 def setVelocity(percentage):
     right_drive_1.set_velocity(percentage, PERCENT)
     right_drive_2.set_velocity(percentage, PERCENT)
@@ -331,7 +339,7 @@ def autonomous_task():
 
     rightGearsMove(REVERSE, 35)
     leftGearsMove(REVERSE, 35)
-    wait(0.5, SECONDS)  # Move backward for 1.8 seconds
+    wait(0.4, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(REVERSE, 0)
@@ -344,21 +352,12 @@ def autonomous_task():
     brain.screen.print("Back Piston: Closed")
 
     allIntakes(REVERSE, 100) 
-    wait(1.4, SECONDS) 
-
-    rightGearsMove(REVERSE, 35)
-    leftGearsMove(FORWARD, 35)
-    wait(0.1, SECONDS)  # Move backward for 1.8 seconds
-
-    # Gradual stop of motors after moving backward
-    rightGearsMove(REVERSE, 0)
-    leftGearsMove(FORWARD, 0)
-    wait(0.2, SECONDS)
+    wait(1.2, SECONDS) 
 
 
     rightGearsMove(FORWARD, 30)
     leftGearsMove(FORWARD, 30)
-    wait(1.3, SECONDS)  
+    wait(2, SECONDS)  
 
     rightGearsMove(FORWARD, 0)
     leftGearsMove(FORWARD, 0)
@@ -370,28 +369,29 @@ def autonomous_task():
 
     rightGearsMove(FORWARD, 35)
     leftGearsMove(REVERSE, 35)
-    wait(0.2, SECONDS)  # Move backward for 1.8 seconds
+    wait(0.3, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(FORWARD, 0)
     leftGearsMove(REVERSE, 0)
-    wait(0.2, SECONDS)
+    wait(0.3, SECONDS)
 
 
     rightGearsMove(FORWARD, 30)
     leftGearsMove(FORWARD, 30)
-    wait(1.2, SECONDS)  
+    wait(0.8, SECONDS)  
 
     rightGearsMove(FORWARD, 0)
     leftGearsMove(FORWARD, 0)
-    wait(0.2, SECONDS)
+    wait(0.3, SECONDS)
 
     allIntakes(REVERSE, 100) 
-    wait(1.8, SECONDS)  
+    wait(1.2, SECONDS)  
 
     wait(0.2, SECONDS)  # Wait for 2 second to allow the pneumatic to activate
 
 
     drive_task()
+
 
 comp = Competition(autonomous_task ,drive_task)
