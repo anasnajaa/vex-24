@@ -17,13 +17,13 @@ brain = Brain()
 
 # We define motors we want to use here 
 # we use the motor variable to display statistics later
-motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_6_1, False) # left
-motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_6_1, False) # left
-motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_6_1, True) # left - top
+motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_6_1, True) # left
+motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_6_1, True) # left
+motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_6_1, False) # left - top
 
-motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_6_1, True) # right
-motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_6_1, True) # right
-motor_18 = Motor(Ports.PORT18, GearSetting.RATIO_6_1, False) # right - top
+motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_6_1, False) # right
+motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_6_1, False) # right
+motor_18 = Motor(Ports.PORT18, GearSetting.RATIO_6_1, True) # right - top
 
 
 motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_6_1, True)
