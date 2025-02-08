@@ -331,7 +331,7 @@ def autonomous_task():
 
     rightGearsMove(REVERSE, 35)
     leftGearsMove(REVERSE, 35)
-    wait(0.4, SECONDS)  # Move backward for 1.8 seconds
+    wait(0.5, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(REVERSE, 0)
@@ -344,12 +344,21 @@ def autonomous_task():
     brain.screen.print("Back Piston: Closed")
 
     allIntakes(REVERSE, 100) 
-    wait(1.2, SECONDS) 
+    wait(1.4, SECONDS) 
+
+    rightGearsMove(REVERSE, 35)
+    leftGearsMove(FORWARD, 35)
+    wait(0.1, SECONDS)  # Move backward for 1.8 seconds
+
+    # Gradual stop of motors after moving backward
+    rightGearsMove(REVERSE, 0)
+    leftGearsMove(FORWARD, 0)
+    wait(0.2, SECONDS)
 
 
     rightGearsMove(FORWARD, 30)
     leftGearsMove(FORWARD, 30)
-    wait(2, SECONDS)  
+    wait(1.3, SECONDS)  
 
     rightGearsMove(FORWARD, 0)
     leftGearsMove(FORWARD, 0)
@@ -361,24 +370,24 @@ def autonomous_task():
 
     rightGearsMove(FORWARD, 35)
     leftGearsMove(REVERSE, 35)
-    wait(0.3, SECONDS)  # Move backward for 1.8 seconds
+    wait(0.2, SECONDS)  # Move backward for 1.8 seconds
 
     # Gradual stop of motors after moving backward
     rightGearsMove(FORWARD, 0)
     leftGearsMove(REVERSE, 0)
-    wait(0.3, SECONDS)
+    wait(0.2, SECONDS)
 
 
     rightGearsMove(FORWARD, 30)
     leftGearsMove(FORWARD, 30)
-    wait(0.8, SECONDS)  
+    wait(1.2, SECONDS)  
 
     rightGearsMove(FORWARD, 0)
     leftGearsMove(FORWARD, 0)
-    wait(0.3, SECONDS)
+    wait(0.2, SECONDS)
 
     allIntakes(REVERSE, 100) 
-    wait(1.2, SECONDS)  
+    wait(1.8, SECONDS)  
 
     wait(0.2, SECONDS)  # Wait for 2 second to allow the pneumatic to activate
 
