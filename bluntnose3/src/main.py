@@ -115,8 +115,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  controller_1.axis3.position() - controller_1.axis1.position() * MAX_RPM
-        drive_right = controller_1.axis3.position() + controller_1.axis1.position() * MAX_RPM
+        drive_left =  controller_1.axis3.position() + controller_1.axis1.position() * MAX_RPM
+        drive_right = controller_1.axis3.position() - controller_1.axis1.position() * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
@@ -281,106 +281,106 @@ def allIntakes(direction, percentage):
     chain_and_hook.spin(direction, percentage, PERCENT)
 
 def autonomous_task():
-    brain.screen.print("Auton Started")
-    three_wire_mogo_clamp_auton = DigitalOut(brain.three_wire_port.h)
+    # brain.screen.print("Auton Started")
+    # three_wire_mogo_clamp_auton = DigitalOut(brain.three_wire_port.h)
 
-    # open piston
-    three_wire_mogo_clamp_auton.set(True)
-    brain.screen.set_cursor(3, 1)
-    brain.screen.print("Back Piston: Opened")
+    # # open piston
+    # three_wire_mogo_clamp_auton.set(True)
+    # brain.screen.set_cursor(3, 1)
+    # brain.screen.print("Back Piston: Opened")
 
-    rightGearsMove(REVERSE, 35)
-    leftGearsMove(REVERSE, 35)
-    wait(1.5, SECONDS)  # Move backward for 1.8 seconds
+    # rightGearsMove(REVERSE, 35)
+    # leftGearsMove(REVERSE, 35)
+    # wait(1.5, SECONDS)  # Move backward for 1.8 seconds
 
-    # Gradual stop of motors after moving backward
-    rightGearsMove(REVERSE, 0)
-    leftGearsMove(REVERSE, 0)
-    wait(0.2, SECONDS)  # Wait for 0.5 seconds
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(REVERSE, 0)
+    # leftGearsMove(REVERSE, 0)
+    # wait(0.2, SECONDS)  # Wait for 0.5 seconds
 
 
  
-    rightGearsMove(FORWARD, 35)
-    leftGearsMove(REVERSE, 35)
-    wait(0.4, SECONDS)  # Move backward for 1.8 seconds
+    # rightGearsMove(FORWARD, 35)
+    # leftGearsMove(REVERSE, 35)
+    # wait(0.4, SECONDS)  # Move backward for 1.8 seconds
 
-    # Gradual stop of motors after moving backward
-    rightGearsMove(FORWARD, 0)
-    leftGearsMove(REVERSE, 0)
-    wait(0.2, SECONDS)
-
-
-    rightGearsMove(REVERSE, 35)
-    leftGearsMove(REVERSE, 35)
-    wait(0.6, SECONDS)  # Move backward for 1.8 seconds
-
-    # Gradual stop of motors after moving backward
-    rightGearsMove(REVERSE, 0)
-    leftGearsMove(REVERSE, 0)
-    wait(0.2, SECONDS)  # Wait for 0.5 seconds
-
-    rightGearsMove(REVERSE, 35)
-    leftGearsMove(FORWARD, 35)
-    wait(0.4, SECONDS)  # Move backward for 1.8 seconds
-
-    # Gradual stop of motors after moving backward
-    rightGearsMove(REVERSE, 0)
-    leftGearsMove(FORWARD, 0)
-    wait(0.2, SECONDS)
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(FORWARD, 0)
+    # leftGearsMove(REVERSE, 0)
+    # wait(0.2, SECONDS)
 
 
-    rightGearsMove(REVERSE, 35)
-    leftGearsMove(REVERSE, 35)
-    wait(0.4, SECONDS)  # Move backward for 1.8 seconds
+    # rightGearsMove(REVERSE, 35)
+    # leftGearsMove(REVERSE, 35)
+    # wait(0.6, SECONDS)  # Move backward for 1.8 seconds
 
-    # Gradual stop of motors after moving backward
-    rightGearsMove(REVERSE, 0)
-    leftGearsMove(REVERSE, 0)
-    wait(0.2, SECONDS)  # Wait for 0.5 seconds
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(REVERSE, 0)
+    # leftGearsMove(REVERSE, 0)
+    # wait(0.2, SECONDS)  # Wait for 0.5 seconds
+
+    # rightGearsMove(REVERSE, 35)
+    # leftGearsMove(FORWARD, 35)
+    # wait(0.4, SECONDS)  # Move backward for 1.8 seconds
+
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(REVERSE, 0)
+    # leftGearsMove(FORWARD, 0)
+    # wait(0.2, SECONDS)
 
 
-    three_wire_mogo_clamp_auton.set(False)  # Close the pneumatic system
-    brain.screen.set_cursor(3, 1)
-    brain.screen.print("Back Piston: Closed")
+    # rightGearsMove(REVERSE, 35)
+    # leftGearsMove(REVERSE, 35)
+    # wait(0.4, SECONDS)  # Move backward for 1.8 seconds
 
-    allIntakes(REVERSE, 100) 
-    wait(1.2, SECONDS) 
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(REVERSE, 0)
+    # leftGearsMove(REVERSE, 0)
+    # wait(0.2, SECONDS)  # Wait for 0.5 seconds
 
 
-    rightGearsMove(FORWARD, 30)
-    leftGearsMove(FORWARD, 30)
-    wait(2, SECONDS)  
+    # three_wire_mogo_clamp_auton.set(False)  # Close the pneumatic system
+    # brain.screen.set_cursor(3, 1)
+    # brain.screen.print("Back Piston: Closed")
 
-    rightGearsMove(FORWARD, 0)
-    leftGearsMove(FORWARD, 0)
-    wait(0.3, SECONDS)
+    # allIntakes(REVERSE, 100) 
+    # wait(1.2, SECONDS) 
+
+
+    # rightGearsMove(FORWARD, 30)
+    # leftGearsMove(FORWARD, 30)
+    # wait(2, SECONDS)  
+
+    # rightGearsMove(FORWARD, 0)
+    # leftGearsMove(FORWARD, 0)
+    # wait(0.3, SECONDS)
 
  
-    allIntakes(REVERSE, 100) 
-    wait(1, SECONDS) 
+    # allIntakes(REVERSE, 100) 
+    # wait(1, SECONDS) 
 
-    rightGearsMove(FORWARD, 35)
-    leftGearsMove(REVERSE, 35)
-    wait(0.3, SECONDS)  # Move backward for 1.8 seconds
+    # rightGearsMove(FORWARD, 35)
+    # leftGearsMove(REVERSE, 35)
+    # wait(0.3, SECONDS)  # Move backward for 1.8 seconds
 
-    # Gradual stop of motors after moving backward
-    rightGearsMove(FORWARD, 0)
-    leftGearsMove(REVERSE, 0)
-    wait(0.3, SECONDS)
+    # # Gradual stop of motors after moving backward
+    # rightGearsMove(FORWARD, 0)
+    # leftGearsMove(REVERSE, 0)
+    # wait(0.3, SECONDS)
 
 
-    rightGearsMove(FORWARD, 30)
-    leftGearsMove(FORWARD, 30)
-    wait(0.8, SECONDS)  
+    # rightGearsMove(FORWARD, 30)
+    # leftGearsMove(FORWARD, 30)
+    # wait(0.8, SECONDS)  
 
-    rightGearsMove(FORWARD, 0)
-    leftGearsMove(FORWARD, 0)
-    wait(0.3, SECONDS)
+    # rightGearsMove(FORWARD, 0)
+    # leftGearsMove(FORWARD, 0)
+    # wait(0.3, SECONDS)
 
-    allIntakes(REVERSE, 100) 
-    wait(1.2, SECONDS)  
+    # allIntakes(REVERSE, 100) 
+    # wait(1.2, SECONDS)  
 
-    wait(0.2, SECONDS)  # Wait for 2 second to allow the pneumatic to activate
+    # wait(0.2, SECONDS)  # Wait for 2 second to allow the pneumatic to activate
 
 
     drive_task()
