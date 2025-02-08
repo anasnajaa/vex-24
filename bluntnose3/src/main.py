@@ -56,7 +56,16 @@ left_drive_3 = motor_13
 intake_roller = motor_01
 chain_and_hook = motor_10
 
-intake_roller.set_velocity(400, RPM)
+# limit speed
+right_drive_1.set_velocity(300, RPM)
+right_drive_2.set_velocity(300, RPM)
+right_drive_3.set_velocity(300, RPM)
+
+left_drive_1.set_velocity(300, RPM)
+left_drive_2.set_velocity(300, RPM)
+left_drive_3.set_velocity(300, RPM)
+
+intake_roller.set_velocity(600, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
@@ -385,4 +394,5 @@ def autonomous_task():
 
     drive_task()
 
+    
 comp = Competition(autonomous_task ,drive_task)
