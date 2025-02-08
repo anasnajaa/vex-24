@@ -60,31 +60,10 @@ chain_and_hook = motor_12
 intake_roller.set_velocity(200, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
-
-class DriveType:
-    LEFT = 0
-    DUAL = 1
-    SPLIT = 2
-    RIGHT = 3
-    value = 0
-
-    def __init__(self, value):
-        self.value = value
-    def __str__(self):
-        return self.value
-    def __repr__(self):
-        return self.value
-    def __eq__(self, value):
-        return self.value == value
-
-# pick LEFT, DUAL, SPLIT or RIGHT
-drive_mode = DriveType(DriveType.SPLIT)
-
 # Max motor speed (percent) for motors controlled by buttons
 MAX_SPEED_DUNKING_HOOK = 50
 MAX_SPEED_INTAKE = 100
 mogo_clamp_on = True
-mouth_open = False
 intake_on = False
 
 #-----------------------------------------------------------------------------*/
@@ -107,21 +86,14 @@ def mogo_clamp_button_pressed():
     three_wire_mogo_clamp.set(mogo_clamp_on)
     return 
 
-def mouth_button_pressed():
-    global mouth_open
-    mouth_open = not mouth_open
-    three_wire_mouth = DigitalOut(brain.three_wire_port.g)
-    three_wire_mouth.set(mouth_open)
-
 
 def intake_toggle_button_pressed():
     global intake_on
-    intake_on = not intake_on    
+    intake_on = not intake_on
     return 
 
 
 # special buttons events
-controller_1.buttonY.pressed(mouth_button_pressed)
 controller_1.buttonA.pressed(mogo_clamp_button_pressed)
 controller_1.buttonDown.pressed(intake_toggle_button_pressed)
 
@@ -143,20 +115,8 @@ def drive_task():
         intake_roller_m_19 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
         
         drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-
-        # Various choices for arcade or tank drive
-        if drive_mode == DriveType.LEFT:
-            drive_left = controller_1.axis3.position() + controller_1.axis4.position()
-            drive_right = controller_1.axis3.position() - controller_1.axis4.position()
-        elif drive_mode == DriveType.DUAL:
-            drive_left = controller_1.axis3.position()
-            drive_right = controller_1.axis2.position()
-        elif drive_mode == DriveType.SPLIT:
-            drive_left = controller_1.axis3.position() + controller_1.axis1.position()
-            drive_right = controller_1.axis3.position() - controller_1.axis1.position()
-        elif drive_mode == DriveType.RIGHT:
-            drive_left = controller_1.axis2.position() + controller_1.axis1.position()
-            drive_right = controller_1.axis2.position() - controller_1.axis1.position()
+        drive_left = controller_1.axis3.position() + controller_1.axis1.position()
+        drive_right = controller_1.axis3.position() - controller_1.axis1.position()
 
 
         # threshold the variable channels so the drive does not
@@ -178,7 +138,7 @@ def drive_task():
         right_drive_3.spin(FORWARD, drive_right, PERCENT)
 
         if controller_1.buttonR1.pressing() or controller_1.buttonL1.pressing():
-            if sensor_rotation.angle() < 140 or sensor_rotation.angle() > 235:
+            if sensor_rotation.angle() < 90 or sensor_rotation.angle() > 400:
                 # do nothing, the arm is above operational range
                 lift_left.stop()
                 lift_right.stop()
