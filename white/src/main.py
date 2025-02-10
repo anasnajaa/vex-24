@@ -313,4 +313,4 @@ def autonomous_task():
 
     drive_task()
 
-comp = Competition(autonomous_task ,drive_task)
+comp = Competition(drive_task, autonomous_task)
