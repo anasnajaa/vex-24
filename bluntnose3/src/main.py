@@ -69,8 +69,9 @@ intake_roller.set_velocity(400, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
-MAX_RPM = 65 # percent 
-MAX_SPEED_INTAKE = 100
+MAX_RPM = 40 # percent 
+MAX_SPEED_INTAKE = 200
+MAX_SPEED_ROLLER = 40
 mogo_clamp_on = True
 mouth_open = False
 intake_on = False
@@ -121,7 +122,7 @@ def drive_task():
     while True:
         # buttons
         chain_and_hook_m_12 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
-        intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
+        intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_ROLLER
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
         drive_left =  (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
@@ -275,14 +276,25 @@ def setVelocity(percentage):
 
 
 def rightGearsMove(direction, percentage):
-    right_drive_1.spin(direction, percentage, PERCENT)
-    right_drive_2.spin(direction, percentage, PERCENT)
-    right_drive_3.spin(direction, percentage, PERCENT)
+    temp = 0
+    if direction == REVERSE:
+        temp = FORWARD
+    else:
+        temp = REVERSE
+    right_drive_1.spin(temp, percentage, PERCENT)
+    right_drive_2.spin(temp, percentage, PERCENT)
+    right_drive_3.spin(temp, percentage, PERCENT)
 
 def leftGearsMove(direction, percentage):
-    left_drive_1.spin(direction, percentage, PERCENT)
-    left_drive_2.spin(direction, percentage, PERCENT)
-    left_drive_3.spin(direction, percentage, PERCENT)
+    temp = 0
+    if direction == REVERSE:
+        temp = FORWARD
+    else:
+        temp = REVERSE
+
+    left_drive_1.spin(temp, percentage, PERCENT)
+    left_drive_2.spin(temp, percentage, PERCENT)
+    left_drive_3.spin(temp, percentage, PERCENT)
 
 def allIntakes(direction, percentage):
     intake_roller.spin(direction, percentage, PERCENT)
@@ -293,7 +305,7 @@ def autonomous_task():
     three_wire_mogo_clamp_auton = DigitalOut(brain.three_wire_port.h)
 
     # open piston
-    three_wire_mogo_clamp_auton.set(True)
+    three_wire_mogo_clamp_auton.set(False)
     brain.screen.set_cursor(3, 1)
     brain.screen.print("Back Piston: Opened")
 
@@ -347,7 +359,7 @@ def autonomous_task():
     wait(0.2, SECONDS)  # Wait for 0.5 seconds
 
 
-    three_wire_mogo_clamp_auton.set(False)  # Close the pneumatic system
+    three_wire_mogo_clamp_auton.set(True)  # Close the pneumatic system
     brain.screen.set_cursor(3, 1)
     brain.screen.print("Back Piston: Closed")
 
@@ -394,4 +406,4 @@ def autonomous_task():
     drive_task()
 
 
-comp = Competition(autonomous_task ,drive_task)
+comp = Competition(drive_task, autonomous_task)
