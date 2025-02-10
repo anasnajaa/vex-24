@@ -60,8 +60,9 @@ intake_roller.set_velocity(500, RPM)
 chain_and_hook.set_velocity(200, RPM)
 
 # Max motor speed (percent) for motors controlled by buttons
-MAX_RPM = 300 # percent 
-MAX_SPEED_INTAKE = 100
+MAX_RPM = 24 # percent 
+MAX_SPEED_INTAKE = 200
+MAX_SPEED_ROLLER = 70
 mogo_clamp_on = True
 mouth_open = False
 intake_on = False
@@ -112,11 +113,11 @@ def drive_task():
     while True:
         # buttons
         chain_and_hook_m_12 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
-        intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
+        intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_ROLLER
 
         # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
-        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * 0.5 * MAX_RPM
-        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * 0.5 * MAX_RPM
+        drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
+        drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
 
         # threshold the variable channels so the drive does not
         # move if the joystick axis does not return exactly to 0
