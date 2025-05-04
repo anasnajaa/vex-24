@@ -20,14 +20,19 @@ brain = Brain()
 motor_11 = Motor(Ports.PORT11, GearSetting.RATIO_6_1, False) # left
 motor_12 = Motor(Ports.PORT12, GearSetting.RATIO_6_1, False) # left
 motor_13 = Motor(Ports.PORT13, GearSetting.RATIO_6_1, True) # left - top
+motor_14 = Motor(Ports.PORT14, GearSetting.RATIO_6_1, True) # left - top
 
 motor_20 = Motor(Ports.PORT20, GearSetting.RATIO_6_1, True) # right
 motor_19 = Motor(Ports.PORT19, GearSetting.RATIO_6_1, True) # right
 motor_18 = Motor(Ports.PORT18, GearSetting.RATIO_6_1, False) # right - top
+motor_17 = Motor(Ports.PORT17, GearSetting.RATIO_6_1, False) # right - top
 
 
-motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_6_1, True)
+motor_01 = Motor(Ports.PORT1, GearSetting.RATIO_6_1, False)
 motor_10 = Motor(Ports.PORT10, GearSetting.RATIO_18_1, True) 
+
+motor_8 = Motor(Ports.PORT8, GearSetting.RATIO_36_1, True) 
+motor_7 = Motor(Ports.PORT7, GearSetting.RATIO_36_1, False) 
 
 
 motor_05 = Motor(Ports.PORT5, GearSetting.RATIO_18_1, False)
@@ -45,13 +50,15 @@ controller_1 = Controller(ControllerType.PRIMARY)
 right_drive_1 = motor_20
 right_drive_2 = motor_19
 right_drive_3 = motor_18
+right_drive_4 = motor_17
 
 left_drive_1 =  motor_11
 left_drive_2 = motor_12
 left_drive_3 = motor_13
+left_drive_4 = motor_14
 
-# lift_left = motor_13
-# lift_right = motor_20
+lift_left = motor_8
+lift_right = motor_7
 
 intake_roller = motor_01
 chain_and_hook = motor_10
@@ -64,6 +71,7 @@ MAX_RPM = 24 # percent
 MAX_SPEED_INTAKE = 200
 MAX_SPEED_ROLLER = 70
 mogo_clamp_on = True
+climb_hook_on = True
 mouth_open = False
 intake_on = False
 
@@ -79,11 +87,18 @@ intake_on = False
 # axis3 - Up and down of the left joystick.
 # axis4 - Left and right of the left joystick.
 
+def climb_hook_button_pressed():
+    global climb_hook_on
+    climb_hook_on = not climb_hook_on
+    three_wire_mogo_clamp = DigitalOut(brain.three_wire_port.h)
+    three_wire_mogo_clamp.set(climb_hook_on)
+    return 
+
 
 def mogo_clamp_button_pressed():
     global mogo_clamp_on
     mogo_clamp_on = not mogo_clamp_on
-    three_wire_mogo_clamp = DigitalOut(brain.three_wire_port.h)
+    three_wire_mogo_clamp = DigitalOut(brain.three_wire_port.g)
     three_wire_mogo_clamp.set(mogo_clamp_on)
     return 
 
@@ -103,6 +118,7 @@ def intake_toggle_button_pressed():
 # special buttons events
 # controller_1.buttonY.pressed(mouth_button_pressed)
 controller_1.buttonDown.pressed(mogo_clamp_button_pressed)
+controller_1.buttonUp.pressed(climb_hook_button_pressed)
 controller_1.buttonY.pressed(intake_toggle_button_pressed)
 
 def drive_task():
@@ -115,7 +131,8 @@ def drive_task():
         chain_and_hook_m_12 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_INTAKE
         intake_roller_m_19 = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_ROLLER
 
-        # drive_lift = (controller_1.buttonR1.pressing() - controller_1.buttonL1.pressing()) * MAX_SPEED_DUNKING_HOOK
+        drive_lift = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_RPM
+
         drive_left =  (controller_1.axis3.position() - controller_1.axis1.position()) * MAX_RPM
         drive_right = (controller_1.axis3.position() + controller_1.axis1.position()) * MAX_RPM
 
@@ -128,27 +145,40 @@ def drive_task():
             drive_right = 0
 
         # The drivetrain
-        left_drive_1.spin(FORWARD, drive_left, PERCENT)
-        right_drive_1.spin(FORWARD, drive_right, PERCENT)
+        left_drive_1.spin(FORWARD, drive_left * .5, PERCENT)
+        right_drive_1.spin(FORWARD, drive_right * .5, PERCENT)
 
-        left_drive_2.spin(FORWARD, drive_left, PERCENT)
-        right_drive_2.spin(FORWARD, drive_right, PERCENT)
+        left_drive_2.spin(FORWARD, drive_left * .5, PERCENT)
+        right_drive_2.spin(FORWARD, drive_right * .5, PERCENT)
 
-        left_drive_3.spin(FORWARD, drive_left, PERCENT)
-        right_drive_3.spin(FORWARD, drive_right, PERCENT)
+        left_drive_3.spin(FORWARD, drive_left * .5, PERCENT)
+        right_drive_3.spin(FORWARD, drive_right * .5, PERCENT)
+
+        left_drive_4.spin(FORWARD, drive_left * .5, PERCENT)
+        right_drive_4.spin(FORWARD, drive_right * .5, PERCENT)
 
         # intake roller + chain and hook
         # if intake is toggled on spin forever
-        if intake_on == True:
-            chain_and_hook.spin(FORWARD, -100, PERCENT)
-            intake_roller.spin(FORWARD, -100, PERCENT)
+        # if intake_on == True:
+        #     chain_and_hook.spin(FORWARD, -100, PERCENT)
+        #     intake_roller.spin(FORWARD, -100, PERCENT)
+        # else:
+        #     if controller_1.buttonL2.pressing() or controller_1.buttonR2.pressing():
+        #         chain_and_hook2 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
+        #         chain_and_hook.spin(FORWARD, chain_and_hook2, PERCENT)
+        #     else:
+        #         chain_and_hook.spin(FORWARD, chain_and_hook_m_12, PERCENT)
+        #         intake_roller.spin(FORWARD, intake_roller_m_19, PERCENT)
+
+        chain_and_hook.spin(FORWARD, chain_and_hook_m_12, PERCENT)
+        intake_roller.spin(FORWARD, intake_roller_m_19, PERCENT)
+
+        if controller_1.buttonR2.pressing() or controller_1.buttonL2.pressing():
+            lift_left.spin(FORWARD, drive_lift, PERCENT)
+            lift_right.spin(FORWARD, drive_lift, PERCENT)
         else:
-            if controller_1.buttonL2.pressing() or controller_1.buttonR2.pressing():
-                chain_and_hook2 = (controller_1.buttonR2.pressing() - controller_1.buttonL2.pressing()) * MAX_SPEED_INTAKE
-                chain_and_hook.spin(FORWARD, chain_and_hook2, PERCENT)
-            else:
-                chain_and_hook.spin(FORWARD, chain_and_hook_m_12, PERCENT)
-                intake_roller.spin(FORWARD, intake_roller_m_19, PERCENT)
+            lift_left.stop(BRAKE)
+            lift_right.stop(BRAKE)
 
         # No need to run too fast
         # sleep(15)
